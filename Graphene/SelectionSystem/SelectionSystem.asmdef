@@ -1,6 +1,8 @@
 {
     "name": "Graphene.SelectionSystem",
-    "references": [],
+    "references": [
+        "Graphene.InputManager"
+    ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],

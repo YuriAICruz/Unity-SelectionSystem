@@ -26,14 +26,24 @@ namespace Graphene.SelectionSystem
             _material.SetInt("_Outline", 0);
         }
 
-        public void OnClick(Vector3 point)
+        public void OnSelect(Vector3 point)
         {
             _material.SetColor("_OutlineColor", SelectedColor);
+        }
+
+        public void OnDeselect()
+        {
+            _material.SetInt("_Outline", 0);
+            _material.SetColor("_OutlineColor", NormalColor);
         }
 
         public void OnPassThrough(Vector3 point)
         {
             //_material.SetInt("_Outline", 0);
+        }
+
+        public void OnDrag(Vector3 delta, Vector3 deltaRaw)
+        {
         }
     }
 }

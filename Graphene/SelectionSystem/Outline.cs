@@ -30,5 +30,10 @@ namespace Graphene.SelectionSystem
         {
             _material.SetColor("_OutlineColor", SelectedColor);
         }
+
+        public void OnPassThrough(Vector3 point)
+        {
+            //_material.SetInt("_Outline", 0);
+        }
     }
 }

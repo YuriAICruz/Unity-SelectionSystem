@@ -7,5 +7,6 @@ namespace Graphene.SelectionSystem
         void OnOver(Vector3 point);
         void OnOut();
         void OnClick(Vector3 point);
+        void OnPassThrough(Vector3 point);
     }
 }

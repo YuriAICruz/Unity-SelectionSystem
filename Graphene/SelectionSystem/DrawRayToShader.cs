@@ -14,7 +14,7 @@ namespace Graphene.SelectionSystem
 
         public void OnOver(Vector3 point)
         {
-            _material.SetVector("_Pos", new Vector4(point.x, point.y, point.z, 0));
+            SetPoitn(point);
         }
 
         public void OnOut()
@@ -25,6 +25,16 @@ namespace Graphene.SelectionSystem
         public void OnClick(Vector3 point)
         {
             
+        }
+
+        public void OnPassThrough(Vector3 point)
+        {
+            SetPoitn(point);
+        }
+
+        private void SetPoitn(Vector3 point)
+        {
+            _material.SetVector("_Pos", new Vector4(point.x, point.y, point.z, 0));
         }
     }
 }

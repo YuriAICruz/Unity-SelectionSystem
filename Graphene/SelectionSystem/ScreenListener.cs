@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Vuforia;
 
@@ -14,10 +15,10 @@ namespace Graphene.SelectionSystem
         public event Action<Ray> UpdatePos, LClickPos;
 
         public LayerMask Mask;
-        private RaycastHit _hit;
 
         private Queue<ISelectable> _selectablesOver = new Queue<ISelectable>();
-        private ISelectable _lastSelected;
+        private ISelectable _lastOver;
+        private RaycastHit[] _hits;
 
         private void Awake()
         {
@@ -42,24 +43,50 @@ namespace Graphene.SelectionSystem
                 LClickPos?.Invoke(ray);
             }
 
-            if (Physics.Raycast(ray, out _hit, _camera.farClipPlane, Mask))
+            _hits = Physics.RaycastAll(ray, _camera.farClipPlane, Mask);
+
+            if (_hits.Length > 0)
             {
-                var slt = _hit.collider.GetComponent<ISelectable>();
-                if (slt != null)
+                var lst = _hits.ToList().OrderBy(x => x.distance).ToArray();
+                var clear = false;
+                for (int i = 0; i < lst.Length; i++)
                 {
-                    if (_lastSelected != slt)
-                        UnOverSelectables();
-                    _lastSelected = slt;
-                    if (Input.GetMouseButtonDown(0))
-                        slt.OnClick(_hit.point);
-                    else
+                    var slt = lst[i].collider.GetComponent<ISelectable>();
+
+                    if (slt != null)
                     {
-                        slt.OnOver(_hit.point);
-                        _selectablesOver.Enqueue(slt);
+                        var first = i == 0;
+
+                        if (first)
+                        {
+                            if (_lastOver != slt)
+                            {
+                                Debug.Log("UnOverSelectables");
+                                UnOverSelectables();
+                            }
+                            if (Input.GetMouseButtonDown(0))
+                            {
+                                slt.OnClick(lst[i].point);
+                            }
+                            else
+                            {
+                                slt.OnOver(lst[i].point);
+                                if (!_selectablesOver.Contains(slt))
+                                    _selectablesOver.Enqueue(slt);
+                                _lastOver = slt;
+                            }
+                        }
+                        else
+                        {
+                            slt.OnPassThrough(lst[i].point);
+                        }
                     }
+                    else clear = true;
                 }
-                else
+                if (clear)
+                {
                     UnOverSelectables();
+                }
             }
             else
                 UnOverSelectables();
